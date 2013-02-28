@@ -1,9 +1,7 @@
 /**
- * Created with JetBrains WebStorm.
- * User: SBLYH
+ * Author: Yixi
  * Date: 13-2-27
  * Time: 下午11:11
- * To change this template use File | Settings | File Templates.
  */
 
 
@@ -21,15 +19,19 @@ var MJ = (function(){
         },
         setStyle:function(dom,attr,value){
             dom.style[attr] = value;
+        },
+        setAttr:function(dom,attr,value){
+            dom[attr] = value;
         }
+
     }
 
     function MaJiang(selector){
         var z = this;
         /*init*/
         z.MJdom = Util.getEle(selector);
-        Util.setStyle(z.MJdom,'width','800px');
-        Util.setStyle(z.MJdom,'height','700px');
+        Util.setAttr(z.MJdom,'width',800);
+        Util.setAttr(z.MJdom,'height',700);
         z.Ctx = z.MJdom.getContext('2d');
         z._initcards();
         z._buildDrawInfo();
@@ -60,11 +62,11 @@ var MJ = (function(){
         _buildDrawInfo:function(){
             var z =this;
             z.drawinfo = {};
-            var _top = 0,_left = 0;
+            var _top = 0,_left = 130;
             for(var i = 0 ; i< z.cards.length;i++){
-                if(i%9==0){
+                if(i%12==0){
                     _top += 65;
-                    _left =0;
+                    _left = 130;
                 }
                 z.drawinfo[z.cards[i]] = {
                     type:'rect',
@@ -83,8 +85,8 @@ var MJ = (function(){
             for(i in z.drawinfo){
                 switch(z.drawinfo[i].type){
                     case "rect":
-                        z.Ctx.fillStyle="rgba(0,0,0,1)";
-                        z.Ctx.fillRect(z.drawinfo[i].left,z.drawinfo[i].top,10,20);
+                        z.Ctx.fillStyle="rgba(0,0,0,.5)";
+                        z.Ctx.fillRect(z.drawinfo[i].left,z.drawinfo[i].top,40,60);
 
                         break;
                 }
