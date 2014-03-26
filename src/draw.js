@@ -172,6 +172,7 @@ MJ.prototype = {
         }else{
             this.currentPlayer = this.playerB;
             this.currentSelectColor = ['red','rgba(255,0,0,.5)'];
+//            this.AISelect();
         }
     },
 
@@ -179,7 +180,37 @@ MJ.prototype = {
 
 
     AISelect:function(){
+        var z = this;
         var allDual = this.getAllDual();
+        allDual.sort(function(left,right){
+            if(left.score > right.score)
+                return -1;
+            else
+                return 1;
+        });
+
+        /*hard*/
+        var standby = allDual.slice(0,2);
+        var take = standby[parseInt(standby.length * Math.random())];
+        console.log(take);
+        setTimeout(function(){
+            take.f.isSelect = true;
+            z.lastSelect = take.f;
+            z.renderView();
+        },1000);
+        setTimeout(function(){
+            take.s.isSelect = true;
+            z.lastSelect = null;
+            z.renderView();
+        },2000);
+        setTimeout(function(){
+            z.currentPlayer.addScore(take.score);
+            z.cleanCard(take.f);
+            z.cleanCard(take.s);
+            z.renderView();
+            z.changePlayer();
+        },3000);
+
 
     },
 
@@ -235,6 +266,7 @@ MJ.prototype = {
     },
 
     mouseDown:function(e){
+        if(this.currentPlayer == this.playerA) return;
         if(this.CurrentselectCard){
             if(!this.lastSelect){
                 if(this.cardCanSelect(this.CurrentselectCard)){
