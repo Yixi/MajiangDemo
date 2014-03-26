@@ -109,8 +109,9 @@ function MJ(element){
     this.currentPlayer = null;
     this.lastSelect = null;
     this.CurrentselectCard = null;
+    this.currentSelectColor = null;
     this.initCards();
-    this.initScoreLayer();
+    this.initPlayers();
     this.bindEvent();
 
 
@@ -149,12 +150,72 @@ MJ.prototype = {
         }
     },
 
-    initScoreLayer:function(){
+    initPlayers:function(){
         this.playerA = new Player(this.Ctx,'playerA');
         this.playerA.x = 30; this.playerA.y = 30;
         this.layers.push(this.playerA.scoreBoard);
-        this.currentPlayer = this.playerA;
+
+        this.playerB = new Player(this.Ctx,'playerB');
+        this.playerB.x = 30; this.playerB.y = 640;
+        this.playerB.scoreBoard.fontColor = 'red';
+        this.layers.push(this.playerB.scoreBoard);
+
+        this.changePlayer();
     },
+
+    changePlayer :function(){
+
+        if(this.currentPlayer == this.playerB){
+            this.currentPlayer = this.playerA;
+            this.currentSelectColor = ['green','rgba(0,255,0,.5)'];
+            this.AISelect();
+        }else{
+            this.currentPlayer = this.playerB;
+            this.currentSelectColor = ['red','rgba(255,0,0,.5)'];
+        }
+    },
+
+    /* AI*/
+
+
+    AISelect:function(){
+        var allDual = this.getAllDual();
+
+    },
+
+    getAllDual:function(){
+        var canSelect = this.getAllCanSelect();
+        var dual = [];
+        for(var i=0;i<canSelect.length;i++){
+            for(var m = i+1;m<canSelect.length;m++){
+                if(canSelect[m].name == canSelect[i].name){
+                    dual.push({
+                        f:canSelect[i],
+                        s:canSelect[m],
+                        score:canSelect[m].value
+                    });
+                }
+            }
+        }
+        return dual;
+    },
+
+    getAllCanSelect:function(){
+        var z = this;
+        var canSelect = [];
+        for(var i=0;i < z.cards.length;i++ ){
+            for(var m=0;m< z.cards[i].length;m++){
+                var card = z.cards[i][m];
+                if(!card) continue;
+                if(z.cardCanSelect(card)){
+                    canSelect.push(card);
+                }
+            }
+        }
+        return canSelect;
+    },
+
+    /**/
 
     cardCanSelect:function(card){
         var z = this;
@@ -189,6 +250,7 @@ MJ.prototype = {
                         if(this.CurrentselectCard.name == this.lastSelect.name) {
                             console.log('get point ' + this.lastSelect.value);
                             this.currentPlayer.addScore(this.lastSelect.value);
+                            this.changePlayer();
                             this.cleanCard(this.CurrentselectCard);
                             this.cleanCard(this.lastSelect);
                             this.lastSelect = null;
@@ -271,9 +333,9 @@ MJ.prototype = {
                 z.Ctx.fillRect(card.x, card.y, card.width, card.height);
 
                 if(card.isSelect) {
-                    z.Ctx.strokeStyle = 'blue';
+                    z.Ctx.strokeStyle = z.currentSelectColor[0];
                     z.Ctx.strokeRect(card.x,card.y,card.width,card.height);
-                    z.Ctx.fillStyle = 'rgba(0,0,255,.3)';
+                    z.Ctx.fillStyle = z.currentSelectColor[1];
                     z.Ctx.fillRect(card.x, card.y, card.width, card.height);
                 }
 
