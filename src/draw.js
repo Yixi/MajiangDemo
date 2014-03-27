@@ -26,16 +26,14 @@ var Card = (function(){
         this.x = 0;
         this.y = 0;
         this.width = 40;
-        this.height = 60;
+        this.height = 53;
         this.isSelect = false;
         this.location = {x:null,y:null};
+        this.sprite = null;
     }
 
     _Card.prototype.includePoint = function(x,y){
-        if(x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height ){
-            return true;
-        }
-        return false;
+        return x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height ;
     };
 
     return _Card;
@@ -100,6 +98,7 @@ function Player(ctx,name){
 
 
 function MJ(element){
+
     this.Dom  = element;
     this.Ctx = this.Dom.getContext('2d');
     Util.setAttr(this.Dom,'width',800);
@@ -110,12 +109,25 @@ function MJ(element){
     this.lastSelect = null;
     this.CurrentselectCard = null;
     this.currentSelectColor = null;
-    this.initCards();
-    this.initPlayers();
-    this.bindEvent();
+    this.sprites = new Sprite(this.Ctx,'res/mj.png',MJSprites);
 
 
-    this.renderView();
+
+
+
+
+    this.init = function(){
+        this.initCards();
+        this.initPlayers();
+        this.bindEvent();
+        this.renderView();
+    };
+
+
+    resources.load([
+        'res/mj.png'
+    ]);
+    resources.onReady(this.init.bind(this));
 }
 
 MJ.prototype = {
@@ -131,6 +143,7 @@ MJ.prototype = {
                     _card.id = p_1 + '_' + m + '_' + n;
                     _card.name = p_1+m;
                     _card.value = m;
+                    _card.sprite = z.sprites.get(_card.name + '.png');
                     _tmpCards.push(_card);
                 }
             }
@@ -282,11 +295,11 @@ MJ.prototype = {
                         if(this.CurrentselectCard.name == this.lastSelect.name) {
                             console.log('get point ' + this.lastSelect.value);
                             this.currentPlayer.addScore(this.lastSelect.value);
-                            this.changePlayer();
                             this.cleanCard(this.CurrentselectCard);
                             this.cleanCard(this.lastSelect);
                             this.lastSelect = null;
                             this.CurrentselectCard = null;
+                            this.changePlayer();
                         }else{
                             this.lastSelect.isSelect = false;
                             this.lastSelect = this.CurrentselectCard;
@@ -361,8 +374,9 @@ MJ.prototype = {
                 var card = z.cards[i][m];
                 if(!card) continue;
 
-                z.Ctx.fillStyle = '#c1c1c1';
-                z.Ctx.fillRect(card.x, card.y, card.width, card.height);
+//                z.Ctx.fillStyle = '#c1c1c1';
+//                z.Ctx.fillRect(card.x, card.y, card.width, card.height);
+                card.sprite.draw(card.x, card.y);
 
                 if(card.isSelect) {
                     z.Ctx.strokeStyle = z.currentSelectColor[0];
@@ -371,10 +385,10 @@ MJ.prototype = {
                     z.Ctx.fillRect(card.x, card.y, card.width, card.height);
                 }
 
-                z.Ctx.font = "Bold 20px Arial";
-                z.Ctx.textAlign = 'center';
-                z.Ctx.fillStyle = '#000';
-                z.Ctx.fillText(card.name,card.x + 20,card.y + 40);
+//                z.Ctx.font = "Bold 20px Arial";
+//                z.Ctx.textAlign = 'center';
+//                z.Ctx.fillStyle = '#000';
+//                z.Ctx.fillText(card.name,card.x + 20,card.y + 40);
 
 
 
