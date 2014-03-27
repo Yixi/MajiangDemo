@@ -163,6 +163,27 @@ MJ.prototype = {
         }
     },
 
+    rearrageCards:function(){
+        var baseX = 130,baseY = 60;
+        for(var i=0;i<9;i++){
+            for(var m=0;m<12;m++){
+                var iRandi = parseInt(9 * Math.random());
+                var iRandm = parseInt(12 * Math.random());
+                if(this.cards[iRandi][iRandm] && this.cards[i][m]){
+                    this.cards[i][m] = [this.cards[iRandi][iRandm],this.cards[iRandi][iRandm] = this.cards[i][m]][0]
+
+                    this.cards[i][m].x = m * (this.cards[i][m].width + 5) + baseX;
+                    this.cards[i][m].y = i * (this.cards[i][m].height + 5) + baseY;
+                    this.cards[i][m].location = {x:m,y:i};
+
+                    this.cards[iRandi][iRandm].x = iRandm * (this.cards[iRandi][iRandm].width + 5) + baseX;
+                    this.cards[iRandi][iRandm].y = iRandi * (this.cards[iRandi][iRandm].height + 5) + baseY;
+                    this.cards[iRandi][iRandm].location = {x:iRandm,y:iRandi};
+                }
+            }
+        }
+    },
+
     initPlayers:function(){
         this.playerA = new Player(this.Ctx,'playerA');
         this.playerA.x = 30; this.playerA.y = 30;
@@ -177,7 +198,10 @@ MJ.prototype = {
     },
 
     changePlayer :function(){
-
+        if(this.getAllDual().length<1){
+            this.rearrageCards();
+            this.renderView();
+        }
         if(this.currentPlayer == this.playerB){
             this.currentPlayer = this.playerA;
             this.currentSelectColor = ['green','rgba(0,255,0,.5)'];
