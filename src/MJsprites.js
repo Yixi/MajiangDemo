@@ -1,4 +1,4 @@
-var MJSprites = {"frames": [
+const MJSprites = {"frames": [
 
     {
         "filename": "a1.png",
@@ -224,5 +224,6 @@ var MJSprites = {"frames": [
         "size": {"w":128,"h":512},
     "scale": "1",
         "smartupdate": "$TexturePacker:SmartUpdate:d9b1db39918408d611a10f1a373b1664:bf16cfb786260d66386329f604c2627e:16a89d30e5b9924bf3da8961ac3724a2$"
-}
-}
+}};
+
+export default MJSprites;

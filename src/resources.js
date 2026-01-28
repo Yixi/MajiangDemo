@@ -1,110 +1,100 @@
 /**
  * Created by liuyixi on 14-3-27.
  */
-(function() {
-    var resourceCache = {};
-    var loading = [];
-    var readyCallbacks = [];
+class ResourceLoader {
+    constructor() {
+        this.cache = {};
+        this.readyCallbacks = [];
+    }
 
     // Load an image url or an array of image urls
-    function load(urlOrArr) {
-        if(urlOrArr instanceof Array) {
-            urlOrArr.forEach(function(url) {
-                _load(url);
-            });
-        }
-        else {
-            _load(urlOrArr);
+    load(urlOrArr) {
+        if (Array.isArray(urlOrArr)) {
+            urlOrArr.forEach((url) => this._load(url));
+        } else {
+            this._load(urlOrArr);
         }
     }
 
-    function _load(url) {
-        if(resourceCache[url]) {
-            return resourceCache[url];
+    _load(url) {
+        if (this.cache[url]) {
+            return this.cache[url];
         }
-        else {
-            var img = new Image();
-            img.onload = function() {
-                resourceCache[url] = img;
 
-                if(isReady()) {
-                    readyCallbacks.forEach(function(func) { func(); });
-                }
-            };
-            resourceCache[url] = false;
-            img.src = url;
-        }
+        const img = new Image();
+        img.onload = () => {
+            this.cache[url] = img;
+
+            if (this.isReady()) {
+                this.readyCallbacks.forEach((func) => func());
+            }
+        };
+        this.cache[url] = false;
+        img.src = url;
+        return this.cache[url];
     }
 
-    function get(url) {
-        return resourceCache[url];
+    get(url) {
+        return this.cache[url];
     }
 
-    function isReady() {
-        var ready = true;
-        for(var k in resourceCache) {
-            if(resourceCache.hasOwnProperty(k) &&
-                !resourceCache[k]) {
-                ready = false;
+    isReady() {
+        for (const key in this.cache) {
+            if (Object.prototype.hasOwnProperty.call(this.cache, key) && !this.cache[key]) {
+                return false;
             }
         }
-        return ready;
+        return true;
     }
 
-    function onReady(func) {
-        readyCallbacks.push(func);
+    onReady(func) {
+        this.readyCallbacks.push(func);
     }
-
-    window.resources = {
-        load: load,
-        get: get,
-        onReady: onReady,
-        isReady: isReady
-    };
-})();
-
-
-function Sprite(Ctx,url,json) {
-    var z = this;
-    this.Ctx = Ctx;
-    this.url = url;
-    this.json = json;
-
-    function _Sprite(name,pos, size) {
-        this.pos = pos;
-        this.size = size;
-        this.Ctx = z.Ctx;
-        this.url = z.url;
-        this.name = name;
-    }
-
-    _Sprite.prototype = {
-        draw: function (x, y) {
-            this.Ctx.drawImage(resources.get(this.url), this.pos.x, this.pos.y, this.size.w, this.size.h, x, y,this.size.w, this.size.h);
-        }
-    };
-    this._Sprite = _Sprite;
 }
 
+export const resources = new ResourceLoader();
 
-Sprite.prototype = {
-    get:function(name){
-        var frames = this.json.frames;
-        var currentInfo;
-        for(var i=0;i<frames.length;i++){
-            if(frames[i].filename == name){
+class SpriteFrame {
+    constructor(ctx, url, name, pos, size) {
+        this.ctx = ctx;
+        this.url = url;
+        this.name = name;
+        this.pos = pos;
+        this.size = size;
+    }
+
+    draw(x, y) {
+        this.ctx.drawImage(resources.get(this.url), this.pos.x, this.pos.y, this.size.w, this.size.h, x, y, this.size.w, this.size.h);
+    }
+}
+
+export class Sprite {
+    constructor(ctx, url, json) {
+        this.ctx = ctx;
+        this.url = url;
+        this.json = json;
+    }
+
+    get(name) {
+        const frames = this.json.frames;
+        let currentInfo = null;
+        for (let i = 0; i < frames.length; i++) {
+            if (frames[i].filename === name) {
                 currentInfo = frames[i];
                 break;
             }
         }
-        return new this._Sprite(name,{
-            x:currentInfo.frame.x,
-            y:currentInfo.frame.y
-        },{
-            w:currentInfo.frame.w,
-            h:currentInfo.frame.h
+
+        if (!currentInfo) {
+            return null;
+        }
+
+        return new SpriteFrame(this.ctx, this.url, name, {
+            x: currentInfo.frame.x,
+            y: currentInfo.frame.y
+        }, {
+            w: currentInfo.frame.w,
+            h: currentInfo.frame.h
         });
-    },
-
-};
-
+    }
+}

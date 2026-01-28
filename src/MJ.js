@@ -4,99 +4,81 @@
  * Time: 下午11:11
  */
 
+const Util = {
+    getEle(selector) {
+        return document.querySelector(selector);
+    },
+    setStyle(dom, attr, value) {
+        dom.style[attr] = value;
+    },
+    setAttr(dom, attr, value) {
+        dom[attr] = value;
+    }
+};
 
-var MJ = (function(){
-
-    function init(selector){
-        return new MaJiang(selector);
+export class MaJiang {
+    constructor(selector) {
+        this.MJdom = Util.getEle(selector);
+        Util.setAttr(this.MJdom, 'width', 800);
+        Util.setAttr(this.MJdom, 'height', 700);
+        this.Ctx = this.MJdom.getContext('2d');
+        this._initcards();
+        this._buildDrawInfo();
+        this._drawByInfo();
     }
 
-    /* Util function*/
-
-    var Util = {
-        getEle:function(selector){
-            return document.querySelector(selector);
-        },
-        setStyle:function(dom,attr,value){
-            dom.style[attr] = value;
-        },
-        setAttr:function(dom,attr,value){
-            dom[attr] = value;
-        }
-
-    }
-
-    function MaJiang(selector){
-        var z = this;
-        /*init*/
-        z.MJdom = Util.getEle(selector);
-        Util.setAttr(z.MJdom,'width',800);
-        Util.setAttr(z.MJdom,'height',700);
-        z.Ctx = z.MJdom.getContext('2d');
-        z._initcards();
-        z._buildDrawInfo();
-        z._drawByInfo();
-    }
-
-    /*function*
-
-     */
-
-    MaJiang.prototype = {
-        _initcards:function(){
-            /*生成麻将牌
-                a_1_1 a_1_2 a_1_3 a_1_4
-            */
-            var z = this;
-            z.cards = [];
-            var colo_ = ["a","b","c"];
-            for(var i = 0;i<3;i++){
-                var p_1 = colo_[i];
-                for(var m=1;m<=9;m++){
-                    for(var n=1;n<=4;n++){
-                        z.cards.push(p_1+"_"+m+"_"+n);
-                    }
-                }
-            }
-        },
-        _buildDrawInfo:function(){
-            var z =this;
-            z.drawinfo = {};
-            var _top = 0,_left = 130;
-            for(var i = 0 ; i< z.cards.length;i++){
-                if(i%12==0){
-                    _top += 65;
-                    _left = 130;
-                }
-                z.drawinfo[z.cards[i]] = {
-                    type:'rect',
-                    top:_top,
-                    left:_left
-                }
-
-                _left+=45;
-            }
-
-        },
-
-
-        _drawByInfo:function(){
-            var z = this;
-            for(i in z.drawinfo){
-                switch(z.drawinfo[i].type){
-                    case "rect":
-                        z.Ctx.fillStyle="rgba(0,0,0,.5)";
-                        z.Ctx.fillRect(z.drawinfo[i].left,z.drawinfo[i].top,40,60);
-
-                        break;
+    _initcards() {
+        /*生成麻将牌
+            a_1_1 a_1_2 a_1_3 a_1_4
+        */
+        this.cards = [];
+        const colo_ = ['a', 'b', 'c'];
+        for (let i = 0; i < 3; i++) {
+            const p_1 = colo_[i];
+            for (let m = 1; m <= 9; m++) {
+                for (let n = 1; n <= 4; n++) {
+                    this.cards.push(p_1 + '_' + m + '_' + n);
                 }
             }
         }
-
     }
 
-    return init;
-})();
+    _buildDrawInfo() {
+        this.drawinfo = {};
+        let _top = 0;
+        let _left = 130;
+        for (let i = 0; i < this.cards.length; i++) {
+            if (i % 12 == 0) {
+                _top += 65;
+                _left = 130;
+            }
+            this.drawinfo[this.cards[i]] = {
+                type: 'rect',
+                top: _top,
+                left: _left
+            };
 
+            _left += 45;
+        }
+    }
 
-var Game1 = MJ('#games');
+    _drawByInfo() {
+        for (const key in this.drawinfo) {
+            if (!Object.prototype.hasOwnProperty.call(this.drawinfo, key)) {
+                continue;
+            }
+            const info = this.drawinfo[key];
+            switch (info.type) {
+                case 'rect':
+                    this.Ctx.fillStyle = 'rgba(0,0,0,.5)';
+                    this.Ctx.fillRect(info.left, info.top, 40, 60);
+
+                    break;
+            }
+        }
+    }
+}
+
+export function MJ(selector) {
+    return new MaJiang(selector);
+}

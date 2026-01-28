@@ -1,8 +1,7 @@
 /**
  * Created by liuyixi on 3/25/14.
  */
+import { MJ } from './draw.js';
 
-
-
-var canvas = document.getElementById('games');
-var game1  = new MJ(canvas);
+const canvas = document.getElementById('games');
+const game1 = new MJ(canvas);
