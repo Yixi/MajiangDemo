@@ -1,7 +1,9 @@
-/**
- * Created by liuyixi on 3/25/14.
- */
-import { MJ } from './draw.js';
+import './style.css';
+import { GameApp } from './GameApp.js';
 
-const canvas = document.getElementById('games');
-const game1 = new MJ(canvas);
+const canvas = document.getElementById('game-canvas');
+const stage = document.querySelector('.stage');
+
+if (canvas && stage) {
+    new GameApp({ canvas, stage });
+}

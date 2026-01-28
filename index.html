@@ -4,26 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MangJiang Demo</title>
-    <style>
-      :root {
-        color-scheme: light;
-      }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f6f7f9;
-      }
-      canvas {
-        border: 1px solid #c1c1c1;
-        background: #fff;
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Marcellus&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <canvas id="games"></canvas>
+    <div id="app">
+      <div class="stage">
+        <canvas id="game-canvas"></canvas>
+      </div>
+    </div>
     <script type="module" src="/src/app.js"></script>
   </body>
 </html>
