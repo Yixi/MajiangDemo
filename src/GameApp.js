@@ -69,9 +69,10 @@ export class GameApp {
     }
 
     _preload() {
-        resources.load(['/res/mj.png']);
+        const spritePath = `${import.meta.env.BASE_URL}res/mj.png`;
+        resources.load([spritePath]);
         resources.onReady(() => {
-            this.renderer.setSpriteSheet(resources.get('/res/mj.png'), MJSprites);
+            this.renderer.setSpriteSheet(resources.get(spritePath), MJSprites);
             this.hud.showStart(true);
             this.renderer.setReady(true);
             this._renderStatic();
